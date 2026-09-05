@@ -26,7 +26,6 @@ import { useBack } from "@refinedev/core";
 import { Loader2 } from "lucide-react";
 import { classSchema } from "@/lib/schema";
 import z from "zod";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import UploadWidget from "@/components/upload-widget";
 
@@ -73,7 +72,7 @@ const ClassesCreate = () => {
 
   const bannerPublicId = form.watch("bannerCldPubId");
 
-  const setBannerImage = (file, field) => {
+  const setBannerImage = (file: any, field: any) => {
     if (file) {
       field.onChange(file.url);
       form.setValue("bannerCldPubId", file.publicId, {
@@ -147,9 +146,7 @@ const ClassesCreate = () => {
                           //       });
                           //     }
                           //   }}
-                          onChange={(file: any, field: any) =>
-                            setBannerImage(file, field)
-                          }
+                          onChange={(file: any) => setBannerImage(file, field)}
                         />
                       </FormControl>
                       <FormMessage />
