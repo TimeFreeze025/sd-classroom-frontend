@@ -3,7 +3,7 @@ import { BACKEND_BASE_URL, USER_ROLES } from "../constants";
 import { inferAdditionalFields } from "better-auth/client/plugins";
 
 export const authClient = createAuthClient({
-  baseURL: `${BACKEND_BASE_URL}auth`,
+  baseURL: `${BACKEND_BASE_URL}api/auth`,
   plugins: [
     inferAdditionalFields({
       user: {
