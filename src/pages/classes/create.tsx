@@ -22,12 +22,13 @@ import {
 
 import { CreateView } from "@/components/refine-ui/views/create-view";
 import { Breadcrumb } from "@/components/refine-ui/layout/breadcrumb";
-import { useBack } from "@refinedev/core";
+import { useBack, useList } from "@refinedev/core";
 import { Loader2 } from "lucide-react";
 import { classSchema } from "@/lib/schema";
 import z from "zod";
 import { Textarea } from "@/components/ui/textarea";
 import UploadWidget from "@/components/upload-widget";
+import { Subject, User } from "@/types";
 
 const ClassesCreate = () => {
   const back = useBack();
@@ -38,9 +39,9 @@ const ClassesCreate = () => {
       resource: "classes",
       action: "create",
     },
-    // defaultValues: {
-    //   status: "active",
-    // },
+    defaultValues: {
+      status: "active",
+    },
   });
 
   const {
@@ -58,17 +59,46 @@ const ClassesCreate = () => {
     }
   };
 
-  const teachers = [
-    { id: "1", name: "John Doe" },
-    { id: "2", name: "Jane Smith" },
-    { id: "3", name: "Alice Johnson" },
-  ];
+  // const teachers = [
+  //   { id: "1", name: "John Doe" },
+  //   { id: "2", name: "Jane Smith" },
+  //   { id: "3", name: "Alice Johnson" },
+  // ];
 
-  const subjects = [
-    { id: "1", name: "Biology", code: "BIO101" },
-    { id: "2", name: "Mathematics", code: "MATH101" },
-    { id: "3", name: "English", code: "ENG101" },
-  ];
+  // const subjects = [
+  //   { id: "1", name: "Biology", code: "BIO101" },
+  //   { id: "2", name: "Mathematics", code: "MATH101" },
+  //   { id: "3", name: "English", code: "ENG101" },
+  // ];
+
+  // Fetch subjects list
+  const { query: subjectsQuery } = useList<Subject>({
+    resource: "subjects",
+    pagination: {
+      pageSize: 100,
+    },
+  });
+
+  // Fetch teachers list
+  const { query: teachersQuery } = useList<User>({
+    resource: "users",
+    filters: [
+      {
+        field: "role",
+        operator: "eq",
+        value: "teacher",
+      },
+    ],
+    pagination: {
+      pageSize: 100,
+    },
+  });
+
+  const teachers = teachersQuery.data?.data || [];
+  const teachersLoading = teachersQuery.isLoading;
+
+  const subjects = subjectsQuery.data?.data || [];
+  const subjectsLoading = subjectsQuery.isLoading;
 
   const bannerPublicId = form.watch("bannerCldPubId");
 
@@ -192,6 +222,7 @@ const ClassesCreate = () => {
                             field.onChange(Number(value))
                           }
                           value={field.value?.toString()}
+                          disabled={subjectsLoading}
                         >
                           <FormControl>
                             <SelectTrigger className="w-full">
@@ -225,6 +256,7 @@ const ClassesCreate = () => {
                         <Select
                           onValueChange={field.onChange}
                           value={field.value?.toString()}
+                          disabled={teachersLoading}
                         >
                           <FormControl>
                             <SelectTrigger className="w-full">

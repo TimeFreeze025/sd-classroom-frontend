@@ -41,7 +41,7 @@
 // };
 
 import { BACKEND_BASE_URL } from "@/constants";
-import { ListResponse } from "@/types";
+import { CreateResponse, GetOneResponse, ListResponse } from "@/types";
 import { createDataProvider, CreateDataProviderOptions } from "@refinedev/rest";
 
 if (!BACKEND_BASE_URL) {
@@ -69,6 +69,12 @@ const options: CreateDataProviderOptions = {
           if (field === "department") params.department = value;
           if (field === "name" || field == "code") params.search = value;
         }
+
+        if (resource === "classes") {
+          if (field === "name") params.search = value;
+          if (field === "subject") params.subject = value;
+          if (field === "teacher") params.teacher = value;
+        }
       });
 
       return params;
@@ -86,8 +92,56 @@ const options: CreateDataProviderOptions = {
       return payload.pagination?.total ?? payload.data?.length ?? 0;
     },
   },
+
+  create: {
+    getEndpoint: ({ resource }) => resource,
+
+    buildBodyParams: async ({ variables }) => variables,
+
+    mapResponse: async (response) => {
+      const json: CreateResponse = await response.json();
+      return json.data ?? {};
+    },
+  },
+
+  getOne: {
+    getEndpoint: ({ resource, id }) => `${resource}/${id}`,
+
+    mapResponse: async (response) => {
+      const json: GetOneResponse = await response.json();
+      return json.data ?? {};
+    },
+  },
+
+  update: {
+    getEndpoint: ({ resource, id }) => `${resource}/${id}`,
+    getRequestMethod: () => "put",
+    buildBodyParams: async ({ variables }) => variables,
+    mapResponse: async (response) => {
+      const json: GetOneResponse = await response.json();
+      return json.data ?? {};
+    },
+  },
+  deleteOne: {
+    getEndpoint: ({ resource, id }) => `${resource}/${id}`,
+    // method: "delete",
+    mapResponse: async (response) => {
+      const json: GetOneResponse = await response.json();
+      return json.data ?? {};
+    },
+  },
 };
 
-const { dataProvider } = createDataProvider(BACKEND_BASE_URL, options);
+// const kyOptions = {
+//   credentials: "include" as const,
+// };
+
+// const { dataProvider } = createDataProvider(BACKEND_BASE_URL, options);
+
+const { dataProvider } = createDataProvider(
+  BACKEND_BASE_URL,
+  options,
+  // kyOptions,
+);
 
 export { dataProvider };
