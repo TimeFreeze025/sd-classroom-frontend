@@ -132,16 +132,14 @@ const options: CreateDataProviderOptions = {
   },
 };
 
-// const kyOptions = {
-//   credentials: "include" as const,
-// };
-
-// const { dataProvider } = createDataProvider(BACKEND_BASE_URL, options);
+const kyOptions = {
+  credentials: "include" as const,
+};
 
 const { dataProvider } = createDataProvider(
   BACKEND_BASE_URL,
   options,
-  // kyOptions,
+  kyOptions,
 );
 
 export { dataProvider };
